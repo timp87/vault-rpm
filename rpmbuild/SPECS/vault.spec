@@ -1,7 +1,7 @@
 # https://fedoraproject.org/wiki/How_to_create_an_RPM_package
 
 Name:		vault
-Version:	0.6.4
+Version:	0.6.5
 Release:	1%{?dist}
 Summary:	Vault is a tool for securely accessing secrets
 License:	MPLv2.0
@@ -71,5 +71,8 @@ exit 0
 %systemd_postun_with_restart %{name}.service
 
 %changelog
+* Wed Feb 17 2017 Pavel Timofeev <timp87@gmail.com> - 0.6.5-1
+- Update to 0.6.5
+
 * Wed Jan 04 2016 Pavel Timofeev <timp87@gmail.com> - 0.6.4-1
 - Initial package
