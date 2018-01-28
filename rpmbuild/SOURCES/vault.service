@@ -6,7 +6,7 @@ After=syslog.target network.target local-fs.target remote-fs.target nss-lookup.t
 Type=simple
 User=vault
 Group=vault
-ExecStart=/usr/bin/vault server -config=/etc/vault/vault.hcl
+ExecStart=/usr/bin/vault server -config=/etc/vault/vault.conf
 ExecReload=/bin/kill -s HUP $MAINPID
 
 [Install]

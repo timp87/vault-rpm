@@ -1,12 +1,12 @@
 # https://fedoraproject.org/wiki/How_to_create_an_RPM_package
 
 Name:		vault
-Version:	0.9.1
+Version:	0.9.2
 Release:	1%{?dist}
 Summary:	Vault is a tool for securely accessing secrets
 License:	MPLv2.0
 Source0:	https://releases.hashicorp.com/%{name}/%{version}/%{name}_%{version}_linux_amd64.zip
-Source1:	%{name}.hcl
+Source1:	%{name}.conf
 Source2:	%{name}.service
 Requires(pre):	shadow-utils
 Requires(post):	systemd libcap
@@ -35,7 +35,7 @@ mkdir -p %{buildroot}%{_bindir}/
 cp -p %{name} %{buildroot}%{_bindir}/
 
 mkdir -p %{buildroot}%{_sysconfdir}/%{name}
-cp -p %{SOURCE1} %{buildroot}%{_sysconfdir}/%{name}/%{name}.hcl
+cp -p %{SOURCE1} %{buildroot}%{_sysconfdir}/%{name}/%{name}.conf
 
 mkdir -p %{buildroot}%{_sharedstatedir}/%{name}
 
@@ -49,7 +49,7 @@ rm -rf %{_builddir}/*
 %files
 %{_bindir}/%{name}
 %dir %{_sysconfdir}/%{name}
-%config(noreplace) %{_sysconfdir}/%{name}/%{name}.hcl
+%config(noreplace) %{_sysconfdir}/%{name}/%{name}.conf
 %attr(0750,%{name},%{name}) %dir %{_sharedstatedir}/%{name}
 %{_unitdir}/%{name}.service
 
@@ -71,6 +71,10 @@ exit 0
 %systemd_postun_with_restart %{name}.service
 
 %changelog
+* Mon Jan 29 2018 Pavel Timofeev <timp87@gmail.com> - 0.9.2-1
+- Update to 0.9.2
+- Change vault config file extension from hcl to conf
+
 * Mon Dec 27 2017 Pavel Timofeev <timp87@gmail.com> - 0.9.1-1
 - Update to 0.9.1
 
