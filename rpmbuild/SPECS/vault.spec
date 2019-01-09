@@ -1,13 +1,16 @@
 # https://fedoraproject.org/wiki/How_to_create_an_RPM_package
 
 Name:		vault
-Version:	0.9.5
+Version:	1.0.1
 Release:	1%{?dist}
 Summary:	Vault is a tool for securely accessing secrets
 License:	MPLv2.0
 Source0:	https://releases.hashicorp.com/%{name}/%{version}/%{name}_%{version}_linux_amd64.zip
-Source1:	%{name}.conf
+Source1:	%{name}.hcl
 Source2:	%{name}.service
+Source3:	%{name}.sysconfig
+
+BuildRequires:	systemd-units
 Requires(pre):	shadow-utils
 Requires(post):	systemd libcap
 Requires(preun):	systemd
@@ -35,7 +38,10 @@ mkdir -p %{buildroot}%{_bindir}/
 cp -p %{name} %{buildroot}%{_bindir}/
 
 mkdir -p %{buildroot}%{_sysconfdir}/%{name}
-cp -p %{SOURCE1} %{buildroot}%{_sysconfdir}/%{name}/%{name}.conf
+cp -p %{SOURCE1} %{buildroot}%{_sysconfdir}/%{name}/%{name}.hcl
+
+mkdir -p %{buildroot}/%{_sysconfdir}/sysconfig
+cp -p %{SOURCE3} %{buildroot}/%{_sysconfdir}/sysconfig/%{name}
 
 mkdir -p %{buildroot}%{_sharedstatedir}/%{name}
 
@@ -47,10 +53,15 @@ rm -rf %{buildroot}
 rm -rf %{_builddir}/*
 
 %files
-%{_bindir}/%{name}
-%dir %{_sysconfdir}/%{name}
-%config(noreplace) %{_sysconfdir}/%{name}/%{name}.conf
-%attr(0750,%{name},%{name}) %dir %{_sharedstatedir}/%{name}
+%defattr(644,root,root,755)
+%caps(cap_ipc_lock=+ep) %attr(755, -, -) %{_bindir}/%{name}
+
+%dir %attr(-, %{name}, %{name}) %{_sysconfdir}/%{name}
+%config(noreplace) %attr(750, %{name}, %{name}) %{_sysconfdir}/%{name}/%{name}.hcl
+
+%config(noreplace) %{_sysconfdir}/sysconfig/%{name}
+
+%dir %attr(750,%{name},%{name}) %{_sharedstatedir}/%{name}
 %{_unitdir}/%{name}.service
 
 %pre
@@ -62,7 +73,6 @@ exit 0
 
 %post
 %systemd_post %{name}.service
-/sbin/setcap cap_ipc_lock=+ep %{_bindir}/%{name}
 
 %preun
 %systemd_preun %{name}.service
@@ -71,33 +81,48 @@ exit 0
 %systemd_postun_with_restart %{name}.service
 
 %changelog
-* Mon Feb 27 2018 Pavel Timofeev <timp87@gmail.com> - 0.9.5-1
+* Wed Jan 09 2019 Pavel Timofeev <timp87@gmail.com> - 1.0.1-1
+- Update to 1.0.1
+
+* Wed Nov 21 2018 Pavel Timofeev <timp87@gmail.com> - 0.11.5-1
+- Update to 0.11.5
+
+* Fri Nov 02 2018 Pavel Timofeev <timp87@gmail.com> - 0.11.4-1
+- Update to 0.11.4
+
+* Fri Sep 21 2018 Pavel Timofeev <timp87@gmail.com> - 0.11.1-1
+- Update to 0.11.1
+
+* Fri Jun 29 2018 Pavel Timofeev <timp87@gmail.com> - 0.10.3-1
+- Update to 0.10.3
+
+* Tue Feb 27 2018 Pavel Timofeev <timp87@gmail.com> - 0.9.5-1
 - Update to 0.9.5
 
 * Mon Jan 29 2018 Pavel Timofeev <timp87@gmail.com> - 0.9.3-1
 - Update to 0.9.3
 
-* Mon Jan 28 2018 Pavel Timofeev <timp87@gmail.com> - 0.9.2-1
+* Sun Jan 28 2018 Pavel Timofeev <timp87@gmail.com> - 0.9.2-1
 - Update to 0.9.2
 - Change vault config file extension from hcl to conf
 
-* Mon Dec 27 2017 Pavel Timofeev <timp87@gmail.com> - 0.9.1-1
+* Wed Dec 27 2017 Pavel Timofeev <timp87@gmail.com> - 0.9.1-1
 - Update to 0.9.1
 
 * Mon Nov 27 2017 Pavel Timofeev <timp87@gmail.com> - 0.9.0-1
 - Update to 0.9.0
 
-* Wed Jun 23 2017 Pavel Timofeev <timp87@gmail.com> - 0.7.3-1
+* Fri Jun 23 2017 Pavel Timofeev <timp87@gmail.com> - 0.7.3-1
 - Update to 0.7.3
 
-* Wed May 11 2017 Pavel Timofeev <timp87@gmail.com> - 0.7.2-1
+* Thu May 11 2017 Pavel Timofeev <timp87@gmail.com> - 0.7.2-1
 - Update to 0.7.2
 
-* Wed Apr 04 2017 Pavel Timofeev <timp87@gmail.com> - 0.7.0-1
+* Tue Apr 04 2017 Pavel Timofeev <timp87@gmail.com> - 0.7.0-1
 - Update to 0.7.0
 
-* Wed Feb 17 2017 Pavel Timofeev <timp87@gmail.com> - 0.6.5-1
+* Fri Feb 17 2017 Pavel Timofeev <timp87@gmail.com> - 0.6.5-1
 - Update to 0.6.5
 
-* Wed Jan 04 2016 Pavel Timofeev <timp87@gmail.com> - 0.6.4-1
+* Wed Jan 04 2017 Pavel Timofeev <timp87@gmail.com> - 0.6.4-1
 - Initial package
