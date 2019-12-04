@@ -1,5 +1,5 @@
 [Unit]
-Description=Vault I% secret management tool
+Description=Vault %i secret management tool
 After=network.target local-fs.target remote-fs.target nss-lookup.target time-sync.target
 
 [Service]
