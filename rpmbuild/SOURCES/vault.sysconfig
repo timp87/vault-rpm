@@ -1,1 +1,0 @@
-CMD_OPTS="server -config=/etc/vault/vault.hcl"
