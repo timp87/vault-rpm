@@ -13,5 +13,7 @@ ExecReload=/bin/kill -s HUP ${MAINPID}
 PermissionsStartOnly=true
 ExecStartPre=/usr/bin/chown -R vault:vault /etc/vault /var/lib/vault
 
+LimitMEMLOCK=infinity
+
 [Install]
 WantedBy=multi-user.target
