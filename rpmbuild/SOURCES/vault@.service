@@ -1,0 +1,17 @@
+[Unit]
+Description=Vault I% secret management tool
+After=network.target local-fs.target remote-fs.target nss-lookup.target time-sync.target
+
+[Service]
+Type=simple
+User=vault
+Group=vault
+EnvironmentFile=-/etc/sysconfig/vault-%i
+ExecStart=/usr/bin/vault %i -config=/etc/vault/%i.hcl ${CMD_OPTS}
+ExecReload=/bin/kill -s HUP ${MAINPID}
+
+PermissionsStartOnly=true
+ExecStartPre=/usr/bin/chown -R vault:vault /etc/vault /var/lib/vault
+
+[Install]
+WantedBy=multi-user.target

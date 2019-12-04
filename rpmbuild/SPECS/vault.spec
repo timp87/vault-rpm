@@ -1,14 +1,16 @@
 # https://fedoraproject.org/wiki/How_to_create_an_RPM_package
 
 Name:		vault
-Version:	1.0.1
+Version:	1.3.0
 Release:	1%{?dist}
 Summary:	Vault is a tool for securely accessing secrets
 License:	MPLv2.0
 Source0:	https://releases.hashicorp.com/%{name}/%{version}/%{name}_%{version}_linux_amd64.zip
-Source1:	%{name}.hcl
-Source2:	%{name}.service
-Source3:	%{name}.sysconfig
+Source1:	server.hcl
+Source2:	agent.hcl
+Source3:	%{name}-server.sysconfig
+Source4:	%{name}-agent.sysconfig
+Source5:	%{name}@.service
 
 BuildRequires:	systemd-units
 Requires(pre):	shadow-utils
@@ -38,15 +40,17 @@ mkdir -p %{buildroot}%{_bindir}/
 cp -p %{name} %{buildroot}%{_bindir}/
 
 mkdir -p %{buildroot}%{_sysconfdir}/%{name}
-cp -p %{SOURCE1} %{buildroot}%{_sysconfdir}/%{name}/%{name}.hcl
+cp -p %{SOURCE1} %{buildroot}%{_sysconfdir}/%{name}/server.hcl
+cp -p %{SOURCE2} %{buildroot}%{_sysconfdir}/%{name}/agent.hcl
 
 mkdir -p %{buildroot}/%{_sysconfdir}/sysconfig
-cp -p %{SOURCE3} %{buildroot}/%{_sysconfdir}/sysconfig/%{name}
+cp -p %{SOURCE3} %{buildroot}/%{_sysconfdir}/sysconfig/%{name}-server
+cp -p %{SOURCE4} %{buildroot}/%{_sysconfdir}/sysconfig/%{name}-agent
 
 mkdir -p %{buildroot}%{_sharedstatedir}/%{name}
 
 mkdir -p %{buildroot}%{_unitdir}
-cp -p %{SOURCE2} %{buildroot}%{_unitdir}
+cp -p %{SOURCE5} %{buildroot}%{_unitdir}
 
 %clean
 rm -rf %{buildroot}
@@ -57,12 +61,14 @@ rm -rf %{_builddir}/*
 %caps(cap_ipc_lock=+ep) %attr(755, -, -) %{_bindir}/%{name}
 
 %dir %attr(-, %{name}, %{name}) %{_sysconfdir}/%{name}
-%config(noreplace) %attr(750, %{name}, %{name}) %{_sysconfdir}/%{name}/%{name}.hcl
+%config(noreplace) %attr(750, %{name}, %{name}) %{_sysconfdir}/%{name}/server.hcl
+%config(noreplace) %attr(750, %{name}, %{name}) %{_sysconfdir}/%{name}/agent.hcl
 
-%config(noreplace) %{_sysconfdir}/sysconfig/%{name}
+%config(noreplace) %{_sysconfdir}/sysconfig/%{name}-server
+%config(noreplace) %{_sysconfdir}/sysconfig/%{name}-agent
 
 %dir %attr(750,%{name},%{name}) %{_sharedstatedir}/%{name}
-%{_unitdir}/%{name}.service
+%{_unitdir}/%{name}@.service
 
 %pre
 getent group %{name} > /dev/null || groupadd -r %{name}
@@ -72,15 +78,31 @@ getent passwd %{name} > /dev/null || \
 exit 0
 
 %post
-%systemd_post %{name}.service
+%systemd_post %{name}@server.service
+%systemd_post %{name}@agent.service
 
 %preun
-%systemd_preun %{name}.service
+%systemd_preun %{name}@server.service
+%systemd_preun %{name}@agent.service
 
 %postun
-%systemd_postun_with_restart %{name}.service
+%systemd_postun_with_restart %{name}@server.service
+%systemd_postun_with_restart %{name}@agent.service
 
 %changelog
+* Wed Dec 04 2019 Pavel Timofeev <timp87@gmail.com> - 1.3.0-1
+- Update to 1.3.0
+- Rework package to support both vault server and agent
+
+* Thu Oct 17 2019 Pavel Timofeev <timp87@gmail.com> - 1.2.3-1
+- Update to 1.2.3
+
+* Wed Apr 03 2019 Pavel Timofeev <timp87@gmail.com> - 1.1.0-1
+- Update to 1.1.0
+
+* Thu Mar 14 2019 Pavel Timofeev <timp87@gmail.com> - 1.0.3-1
+- Update to 1.0.3
+
 * Wed Jan 09 2019 Pavel Timofeev <timp87@gmail.com> - 1.0.1-1
 - Update to 1.0.1
 
