@@ -7,8 +7,8 @@ Type=simple
 User=vault
 Group=vault
 EnvironmentFile=-/etc/sysconfig/vault-%i
-ExecStart=/usr/bin/vault %i -config=/etc/vault/%i.hcl ${CMD_OPTS}
-ExecReload=/bin/kill -s HUP ${MAINPID}
+ExecStart=/usr/bin/vault %i -config=/etc/vault/%i.hcl $CMD_OPTS
+ExecReload=/bin/kill -s HUP $MAINPID
 
 PermissionsStartOnly=true
 ExecStartPre=/usr/bin/chown -R vault:vault /etc/vault /var/lib/vault
