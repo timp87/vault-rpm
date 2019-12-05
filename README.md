@@ -20,7 +20,7 @@ A set of files to build RPM for HashiCorp Vault - a tool for managing secrets ht
 4. Download distfile and build RPM
 
    ```
-   spectool -g -R /root/rpmbuild/SPECS/vault.spec && \
+   spectool -g -R ~/rpmbuild/SPECS/vault.spec && \
    rpmbuild -ba ~/rpmbuild/SPECS/vault.spec
    ```
 
