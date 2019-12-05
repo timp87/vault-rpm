@@ -5,7 +5,7 @@ A set of files to build RPM for HashiCorp Vault - a tool for managing secrets ht
 1. Install prerequisite software
 
    ```
-   sudo yum install -y rpm-build
+   sudo yum install -y rpm-build rpmdevtools
    ```
 2. Clone this repository
 
@@ -17,9 +17,10 @@ A set of files to build RPM for HashiCorp Vault - a tool for managing secrets ht
    ```
    cp -r vault-rpm/rpmbuild ~/
    ```
-4. Build RPM
+4. Download distfile and build RPM
 
    ```
+   spectool -g -R /root/rpmbuild/SPECS/vault.spec && \
    rpmbuild -ba ~/rpmbuild/SPECS/vault.spec
    ```
 
