@@ -13,6 +13,7 @@ ExecReload=/bin/kill -s HUP $MAINPID
 PermissionsStartOnly=true
 ExecStartPre=/usr/bin/chown -R vault:vault /etc/vault /var/lib/vault
 
+SyslogIdentifier=vault-%i
 LimitMEMLOCK=infinity
 
 [Install]
