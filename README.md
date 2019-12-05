@@ -2,6 +2,9 @@
 A set of files to build RPM for HashiCorp Vault - a tool for managing secrets https://www.vaultproject.io/
 
 ## How to build RPM
+
+*Let's say you do it under root user*
+
 1. Install prerequisite software
 
    ```
