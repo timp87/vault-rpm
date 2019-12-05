@@ -19,6 +19,8 @@ Requires(preun):	systemd
 Requires(postun):	systemd
 URL:		https://www.vaultproject.io/
 
+NoSource: 0
+
 %define debug_package %{nil}
 
 %description
